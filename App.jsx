@@ -1,7 +1,20 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import MoleculeDemo from './MoleculeViewer'
 
 export default function App() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    
+    return () => window.removeEventListener('resize', checkScreenSize)
+  }, [])
+
   const styles = {
     container: {
       minHeight: '100vh',
@@ -10,7 +23,7 @@ export default function App() {
       backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
       backgroundSize: '20px 20px',
       backgroundPosition: '0 0',
-      overflow: 'hidden',
+      overflow: isMobile ? 'auto' : 'hidden',
       position: 'relative'
     },
     fadeOverlay: {
@@ -19,35 +32,40 @@ export default function App() {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,0.4) 33%, rgba(255,255,255,0.1) 50%, transparent 65%)',
+      background: isMobile 
+        ? 'linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 50%, transparent 100%)'
+        : 'linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 25%, rgba(255,255,255,0.4) 33%, rgba(255,255,255,0.1) 50%, transparent 65%)',
       pointerEvents: 'none',
       zIndex: 1
     },
-          header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '20px 60px',
-        backgroundColor: 'white',
-        borderBottom: '1px solid #e5e7eb',
-        position: 'relative',
-        zIndex: 20
-      },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: isMobile ? '15px 20px' : '20px 60px',
+      backgroundColor: 'white',
+      borderBottom: '1px solid #e5e7eb',
+      position: 'relative',
+      zIndex: 20,
+      flexWrap: 'wrap',
+      gap: isMobile ? '15px' : '0'
+    },
     logo: {
-      fontSize: '24px',
+      fontSize: isMobile ? '20px' : '24px',
       fontWeight: '700',
       color: '#1f2937',
       letterSpacing: '-0.5px'
     },
     nav: {
       display: 'flex',
-      gap: '40px',
-      alignItems: 'center'
+      gap: isMobile ? '20px' : '40px',
+      alignItems: 'center',
+      flexWrap: 'wrap'
     },
     navLink: {
       color: '#6b7280',
       textDecoration: 'none',
-      fontSize: '16px',
+      fontSize: isMobile ? '14px' : '16px',
       fontWeight: '500',
       transition: 'color 0.2s ease',
       cursor: 'pointer'
@@ -55,36 +73,42 @@ export default function App() {
     contactButton: {
       backgroundColor: '#10b981',
       color: 'white',
-      padding: '12px 24px',
+      padding: isMobile ? '10px 20px' : '12px 24px',
       borderRadius: '8px',
       border: 'none',
-      fontSize: '16px',
+      fontSize: isMobile ? '14px' : '16px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'background-color 0.2s ease'
     },
-         hero: {
-       position: 'relative',
-       height: 'calc(100vh - 80px)',
-       display: 'flex',
-       alignItems: 'center',
-       overflow: 'hidden'
-     },
+    hero: {
+      position: 'relative',
+      height: isMobile ? 'auto' : 'calc(100vh - 80px)',
+      minHeight: isMobile ? 'auto' : 'auto',
+      display: 'flex',
+      alignItems: 'center',
+      overflow: isMobile ? 'visible' : 'hidden',
+      paddingTop: isMobile ? '20px' : '0',
+      paddingBottom: isMobile ? '40px' : '0'
+    },
     content: {
       display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
       width: '100%',
       maxWidth: '1400px',
       margin: '0 auto',
-      padding: '0 60px',
+      padding: isMobile ? '0 20px' : '0 60px',
       alignItems: 'center',
-      gap: '100px'
+      gap: isMobile ? '40px' : '100px'
     },
-         textSection: {
-       flex: 1,
-       zIndex: 10
-     },
+    textSection: {
+      flex: 1,
+      zIndex: 10,
+      textAlign: isMobile ? 'center' : 'left',
+      order: isMobile ? 1 : 1
+    },
     headline: {
-      fontSize: '72px',
+      fontSize: isMobile ? '48px' : '72px',
       fontWeight: '800',
       lineHeight: '1.1',
       color: '#1f2937',
@@ -95,44 +119,54 @@ export default function App() {
       color: '#10b981'
     },
     subtext: {
-      fontSize: '20px',
+      fontSize: isMobile ? '18px' : '20px',
       color: '#6b7280',
       lineHeight: '1.6',
-      maxWidth: '500px',
-      marginBottom: '40px'
+      maxWidth: isMobile ? '100%' : '500px',
+      marginBottom: '40px',
+      margin: isMobile ? '0 auto 40px auto' : '0 0 40px 0'
     },
     ctaButton: {
       backgroundColor: '#1f2937',
       color: 'white',
-      padding: '16px 32px',
+      padding: isMobile ? '14px 28px' : '16px 32px',
       borderRadius: '12px',
       border: 'none',
-      fontSize: '18px',
+      fontSize: isMobile ? '16px' : '18px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
-      marginRight: '16px'
+      marginRight: '16px',
+      marginBottom: isMobile ? '10px' : '0'
     },
     secondaryButton: {
       backgroundColor: 'transparent',
       color: '#1f2937',
-      padding: '16px 32px',
+      padding: isMobile ? '14px 28px' : '16px 32px',
       borderRadius: '12px',
       border: '2px solid #e5e7eb',
-      fontSize: '18px',
+      fontSize: isMobile ? '16px' : '18px',
       fontWeight: '600',
       cursor: 'pointer',
       transition: 'all 0.2s ease'
     },
-         moleculeSection: {
-       flex: 1,
-       height: '600px',
-       position: 'relative',
-       zIndex: 10,
-       display: 'flex',
-       alignItems: 'center',
-       justifyContent: 'center'
-     }
+    moleculeSection: {
+      flex: 1,
+      height: isMobile ? '400px' : '600px',
+      width: isMobile ? '100%' : 'auto',
+      position: 'relative',
+      zIndex: 10,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      order: isMobile ? 2 : 2
+    },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      alignItems: 'center',
+      gap: isMobile ? '10px' : '0'
+    }
   }
 
   return (
@@ -165,7 +199,7 @@ export default function App() {
               Experience cutting-edge molecular visualization powered by Three.js and React Three Fiber. 
               Featuring interactive controls, realistic materials, and smooth animations.
             </p>
-            <div>
+            <div style={styles.buttonContainer}>
               <button style={styles.ctaButton}>
                 Explore Demo
               </button>
