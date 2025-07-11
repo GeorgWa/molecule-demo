@@ -15,7 +15,6 @@
     "@pmndrs/vanilla": "^1.21.0",
     "@react-three/drei": "^10.5.0",
     "@react-three/fiber": "^9.2.0",
-    "leva": "^0.10.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "three": "^0.178.0",
