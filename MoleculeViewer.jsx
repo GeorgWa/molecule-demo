@@ -2,10 +2,10 @@ import React, { Suspense, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber'
 import { MeshTransmissionMaterial, Environment } from '@react-three/drei'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 function TransmissionMolecule() {
-  const obj = useLoader(OBJLoader, './btk.obj')
+  const gltf = useLoader(GLTFLoader, './btk.glb')
   
   const config = {
     meshPhysicalMaterial: false,
@@ -32,7 +32,7 @@ function TransmissionMolecule() {
   
   return (
     <>
-      {obj.children.map((child, index) => (
+      {gltf.scene.children.map((child, index) => (
         <mesh key={index} geometry={child.geometry}>
           <MeshTransmissionMaterial
             background={new THREE.Color(config.bg)}
@@ -45,11 +45,11 @@ function TransmissionMolecule() {
 }
 
 function StandardMolecule() {
-  const obj = useLoader(OBJLoader, './btk_cartoon.obj')
+  const gltf = useLoader(GLTFLoader, './btk_cartoon.glb')
   
   return (
     <group rotation={[0, 0, 0]}>
-      {obj.children.map((child, index) => (
+      {gltf.scene.children.map((child, index) => (
         <mesh key={`cartoon-${index}`} geometry={child.geometry}>
           <meshStandardMaterial 
             color="#4A90E2"
