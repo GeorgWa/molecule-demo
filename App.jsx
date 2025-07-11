@@ -12,12 +12,22 @@ export default function App() {
     checkScreenSize()
     window.addEventListener('resize', checkScreenSize)
     
+    // Ensure document can scroll on mobile
+    if (isMobile) {
+      document.body.style.overflow = 'auto'
+      document.documentElement.style.overflow = 'auto'
+    } else {
+      document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
+    }
+    
     return () => window.removeEventListener('resize', checkScreenSize)
-  }, [])
+  }, [isMobile])
 
   const styles = {
     container: {
       minHeight: '100vh',
+      height: isMobile ? 'auto' : '100vh',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       backgroundColor: '#ffffff',
       backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
@@ -84,12 +94,12 @@ export default function App() {
     hero: {
       position: 'relative',
       height: isMobile ? 'auto' : 'calc(100vh - 80px)',
-      minHeight: isMobile ? 'auto' : 'auto',
+      minHeight: isMobile ? 'calc(100vh - 60px)' : 'auto',
       display: 'flex',
-      alignItems: 'center',
-      overflow: isMobile ? 'visible' : 'hidden',
-      paddingTop: isMobile ? '20px' : '0',
-      paddingBottom: isMobile ? '40px' : '0'
+      alignItems: isMobile ? 'flex-start' : 'center',
+      overflow: 'visible',
+      paddingTop: isMobile ? '40px' : '0',
+      paddingBottom: isMobile ? '60px' : '0'
     },
     content: {
       display: 'flex',
