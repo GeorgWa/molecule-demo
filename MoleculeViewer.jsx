@@ -5,7 +5,7 @@ import { MeshTransmissionMaterial, Environment } from '@react-three/drei'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 
 function TransmissionMolecule() {
-  const obj = useLoader(OBJLoader, '/btk.obj')
+  const obj = useLoader(OBJLoader, './btk.obj')
   
   const config = {
     meshPhysicalMaterial: false,
@@ -45,7 +45,7 @@ function TransmissionMolecule() {
 }
 
 function StandardMolecule() {
-  const obj = useLoader(OBJLoader, '/btk_cartoon.obj')
+  const obj = useLoader(OBJLoader, './btk_cartoon.obj')
   
   return (
     <group rotation={[0, 0, 0]}>
