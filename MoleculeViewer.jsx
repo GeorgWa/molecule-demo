@@ -1,34 +1,35 @@
-import React, { Suspense, useRef, useState } from 'react'
+import React, { Suspense, useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
 import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber'
 import { MeshTransmissionMaterial, Environment } from '@react-three/drei'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { useControls } from 'leva'
 
 function TransmissionMolecule() {
-  const gltf = useLoader(GLTFLoader, './btk.glb')
+  const gltf = useLoader(GLTFLoader, './surface.glb')
   
-  const config = {
+  const config = useControls('Surface Shader', {
     meshPhysicalMaterial: false,
     transmissionSampler: false,
     backside: false,
-    samples: 1,
-    resolution: 512,
-    transmission: 0.26,
-    roughness: 0.86,
-    thickness: 0.3,
-    ior: 1.8,
-    chromaticAberration: 0.0,
-    anisotropy: 0.0,
-    distortion: 0.0,
-    distortionScale: 0.15,
-    temporalDistortion: 0.5,
-    clearcoat: 0.08,
-    clearcoatRoughness: 0.53,
-    attenuationDistance: 0.5,
+    samples: { value: 1, min: 1, max: 16, step: 1 },
+    resolution: { value: 512, min: 64, max: 2048, step: 64 },
+    transmission: { value: 0.26, min: 0, max: 1, step: 0.01 },
+    roughness: { value: 0.86, min: 0, max: 1, step: 0.01 },
+    thickness: { value: 0.3, min: 0, max: 3, step: 0.01 },
+    ior: { value: 1.8, min: 1, max: 3, step: 0.01 },
+    chromaticAberration: { value: 0.0, min: 0, max: 1, step: 0.01 },
+    anisotropy: { value: 0.0, min: 0, max: 1, step: 0.01 },
+    distortion: { value: 0.0, min: 0, max: 1, step: 0.01 },
+    distortionScale: { value: 0.15, min: 0, max: 1, step: 0.01 },
+    temporalDistortion: { value: 0.5, min: 0, max: 1, step: 0.01 },
+    clearcoat: { value: 0.08, min: 0, max: 1, step: 0.01 },
+    clearcoatRoughness: { value: 0.53, min: 0, max: 1, step: 0.01 },
+    attenuationDistance: { value: 0.5, min: 0, max: 2, step: 0.01 },
     attenuationColor: '#ffffff',
     color: '#77aa76',
     bg: '#69faff'
-  }
+  })
   
   return (
     <>
@@ -45,7 +46,7 @@ function TransmissionMolecule() {
 }
 
 function StandardMolecule() {
-  const gltf = useLoader(GLTFLoader, './btk_cartoon.glb')
+  const gltf = useLoader(GLTFLoader, './cartoon.glb')
   
   return (
     <group rotation={[0, 0, 0]}>
@@ -70,7 +71,28 @@ function RotatableMolecule() {
   const [previousMousePosition, setPreviousMousePosition] = useState({ x: 0, y: 0 })
   const [targetDragOffset, setTargetDragOffset] = useState({ x: 0, y: 0 })
   const [currentDragOffset, setCurrentDragOffset] = useState({ x: 0, y: 0 })
+  const [isMobile, setIsMobile] = useState(false)
   const { size, viewport } = useThree()
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  // Responsive scale based on screen size
+  const getResponsiveScale = () => {
+    if (isMobile) {
+      // Smaller scale for mobile to ensure it fits
+      return [0.05, 0.05, 0.05]
+    }
+    return [0.08, 0.08, 0.08]
+  }
 
   // Sinusoidal rocking animation combined with smooth drag offset
   useFrame((state, delta) => {
@@ -134,7 +156,7 @@ function RotatableMolecule() {
   return (
     <group
       ref={meshRef}
-      scale={[0.08, 0.08, 0.08]}
+      scale={getResponsiveScale()}
       position={[0, 0, 0]}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
@@ -149,18 +171,38 @@ function RotatableMolecule() {
 }
 
 export default function MoleculeDemo() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const containerStyle = {
     width: '100%',
-    height: '800px',
+    height: isMobile ? '400px' : '800px',
     overflow: 'hidden',
     borderRadius: '8px'
+  }
+
+  // Responsive camera settings
+  const getCameraSettings = () => {
+    if (isMobile) {
+      return { position: [0, 0, 18], fov: 40 }
+    }
+    return { position: [0, 0, 15], fov: 35 }
   }
 
   return (
     <div style={containerStyle}>
       <Canvas 
         shadows 
-        camera={{ position: [0, 0, 15], fov: 35 }}
+        camera={getCameraSettings()}
         style={{ width: '100%', height: '100%' }}
         gl={{ alpha: true }}
       >
